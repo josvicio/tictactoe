@@ -16,16 +16,12 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'tictactoe'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('tictactoe');
-  });
-
-  it('should render title', () => {
+  it('should render gameboard', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('tictactoe app is running!');
+    expect(compiled.querySelectorAll('.gameboard .square')?.length)
+      .withContext("Not the right amount of squares on the gameboard")
+      .toEqual(9);
   });
 });
