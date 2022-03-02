@@ -7,19 +7,4 @@ describe("AppComponent", () => {
             declarations: [AppComponent]
         }).compileComponents();
     });
-
-    it("should create the app", () => {
-        const fixture = TestBed.createComponent(AppComponent);
-        const app = fixture.componentInstance;
-        expect(app).toBeTruthy();
-    });
-
-    it("should render gameboard", () => {
-        const fixture = TestBed.createComponent(AppComponent);
-        fixture.detectChanges();
-        const compiled = fixture.nativeElement as HTMLElement;
-        expect(compiled.querySelectorAll(".gameboard .square")?.length)
-            .withContext("Not the right amount of squares on the gameboard")
-            .toEqual(9);
-    });
 });

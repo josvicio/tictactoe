@@ -7,7 +7,10 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "e2e": "ng e2e",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "private": true,
   "dependencies": {
@@ -27,6 +30,7 @@
     "@angular-devkit/build-angular": "~13.2.5",
     "@angular/cli": "~13.2.5",
     "@angular/compiler-cli": "~13.2.0",
+    "@cypress/schematic": "^1.6.0",
     "@schuchard/prettier": "^5.1.0",
     "@types/jasmine": "~3.10.0",
     "@types/node": "^12.11.1",
@@ -40,7 +44,8 @@
     "lint-staged": "latest",
     "prettier": "latest",
     "tslint-config-prettier": "latest",
-    "typescript": "~4.5.2"
+    "typescript": "~4.5.2",
+    "cypress": "latest"
   },
   "husky": {
     "hooks": {
