@@ -1,17 +1,7 @@
-<table class="gameboard">
-    <tr>
-        <td><square></square></td>
-        <td><square></square></td>
-        <td><square></square></td>
-    </tr>
-    <tr>
-        <td><square></square></td>
-        <td><square></square></td>
-        <td><square></square></td>
-    </tr>
-    <tr>
-        <td><square></square></td>
-        <td><square></square></td>
-        <td><square></square></td>
+<table class="gameboard" data-test="gameboard">
+    <tr *ngFor="let row of [1, 2, 3]">
+        <td *ngFor="let column of [1, 2, 3]">
+            <square></square>
+        </td>
     </tr>
 </table>
