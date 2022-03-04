@@ -36,13 +36,19 @@ describe("Game board", () => {
         });
     });
     describe("Subsequent turns", () => {
-        it("should disallow human plays on an existing X square", () => {
-            app.humanMove(0, 0);
-            app.humanMove(0, 0);
-            expect(fixture.componentInstance.squares.flat(1).filter(s => s == "O").length)
-                .withContext("Wrong number of computer moves")
-                .toEqual(1);
-        });
+        for (const symbol of ["X", "O"]) {
+            it(`should disallow human plays on an existing ${symbol} square`, () => {
+                const testSquares = [
+                    [symbol, "", ""],
+                    ["", "", ""],
+                    ["", "", ""]
+                ];
+                app.squares = testSquares;
+                app.humanMove(0, 0);
+                expect(app.squares[0][0]).toEqual(symbol);
+                expect(app.squares).withContext("Board was modified").toEqual(testSquares);
+            });
+        }
     });
 });
 
