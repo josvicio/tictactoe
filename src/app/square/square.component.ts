@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
     selector: "square",
@@ -6,10 +6,7 @@ import { Component, OnInit } from "@angular/core";
     styleUrls: ["./square.component.sass"]
 })
 export class SquareComponent implements OnInit {
-    symbol: string = "";
-    clicked() {
-        this.symbol = "X";
-    }
+    @Input() symbol: string = "";
 
     constructor() {}
 

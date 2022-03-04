@@ -1,7 +1,13 @@
 <table class="gameboard" data-test="gameboard">
-    <tr *ngFor="let row of [1, 2, 3]">
-        <td *ngFor="let column of [1, 2, 3]">
-            <square></square>
+    <tr *ngFor="let row of [0, 1, 2]">
+        <td *ngFor="let column of [0, 1, 2]">
+            <square
+                data-test="square"
+                [attr.data-row]="row"
+                [attr.data-column]="column"
+                [symbol]="squares[row][column]"
+                (click)="humanMove(row, column)"
+            ></square>
         </td>
     </tr>
 </table>

@@ -22,10 +22,4 @@ describe("SquareComponent", () => {
         expect(component.symbol).withContext("symbol should be blank").toEqual("");
         expect(fixture.nativeElement.textContent).toEqual("");
     });
-    it("should show an X when clicked", () => {
-        fixture.debugElement.query(By.css('[data-test="square"]')).nativeElement.click();
-        fixture.detectChanges();
-        expect(component.symbol).withContext("symbol is incorrect").toEqual("X");
-        expect(fixture.nativeElement.textContent).toEqual("X");
-    });
 });

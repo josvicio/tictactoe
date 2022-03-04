@@ -11,7 +11,28 @@ describe("At the beginning of the game", () => {
 });
 
 describe("First move", () => {
-    it("should show the human's first move", () => {
-        cy.get(squareSelector).first().click().should("have.text", "X");
+    forAllSquares((row, column) => {
+        describe(`at (${column}, ${row})`, () => {
+            const square = squareAt(row, column);
+            it("should show the human's first move", () => {
+                cy.get(square).click().should("have.text", "X");
+            });
+
+            it("should show computer's move after human's move", () => {
+                cy.get(square).first().click().should("have.text", "X");
+                cy.get(squareSelector).contains("O");
+            });
+        });
     });
 });
+
+function squareAt(row: number, column: number): string {
+    return `[data-test=square][data-row=${row}][data-column=${column}]`;
+}
+function forAllSquares(callback: (row: number, column: number) => void) {
+    for (const row of [0, 1, 2]) {
+        for (const column of [0, 1, 2]) {
+            callback(row, column);
+        }
+    }
+}
