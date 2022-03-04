@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { AppComponent } from "./app.component";
+import { AppComponent, Board, Row, updateElement } from "./app.component";
 import { SquareComponent } from "./square/square.component";
 
 describe("Game board", () => {
@@ -38,7 +38,7 @@ describe("Game board", () => {
     describe("Subsequent turns", () => {
         for (const symbol of ["X", "O"]) {
             it(`should disallow human plays on an existing ${symbol} square`, () => {
-                const testSquares = [
+                const testSquares: Board = [
                     [symbol, "", ""],
                     ["", "", ""],
                     ["", "", ""]
@@ -49,6 +49,39 @@ describe("Game board", () => {
                 expect(app.squares).withContext("Board was modified").toEqual(testSquares);
             });
         }
+        describe("should have the computer win as soon as possible", () => {
+            for (const [rowIndex, rowName] of [
+                [0, "top"],
+                [1, "middle"],
+                [2, "bottom"]
+            ] as [number, string][]) {
+                it(`in the ${rowName} row`, () => {
+                    const initialBoard: Board = [
+                        ["", "", ""],
+                        ["", "", ""],
+                        ["", "", ""]
+                    ];
+                    const initialTestRow: Row = ["O", "O", ""];
+                    const expectedTestRow: Row = ["O", "O", "O"];
+                    const testSquares: Board = updateElement(
+                        initialBoard,
+                        rowIndex,
+                        initialTestRow
+                    );
+                    const expectedSquares: Board = updateElement(
+                        initialBoard,
+                        rowIndex,
+                        expectedTestRow
+                    );
+                    app.squares = testSquares;
+                    app.computerMove();
+                    console.log(app.squares);
+                    expect(app.squares)
+                        .withContext("Computer did not win")
+                        .toEqual(expectedSquares);
+                });
+            }
+        });
     });
 });
 
