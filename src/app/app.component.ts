@@ -12,8 +12,10 @@ export class AppComponent {
         ["", "", ""]
     ];
     humanMove(row: number, column: number) {
-        this.squares[row][column] = "X";
-        this.computerMove();
+        if (this.squares[row][column] == "") {
+            this.squares[row][column] = "X";
+            this.computerMove();
+        }
     }
     computerMove() {
         for (const row in this.squares) {

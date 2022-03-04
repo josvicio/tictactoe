@@ -5,6 +5,7 @@
                 data-test="square"
                 [attr.data-row]="row"
                 [attr.data-column]="column"
+                [attr.data-symbol]="squares[row][column]"
                 [symbol]="squares[row][column]"
                 (click)="humanMove(row, column)"
             ></square>

@@ -2,11 +2,11 @@ beforeEach(() => {
     cy.visit("/");
 });
 
-const squareSelector = "[data-test=gameboard] [data-test=square]";
+const allSquares = "[data-test=gameboard] [data-test=square]";
 
 describe("At the beginning of the game", () => {
     it("shows a blank gameboard before the game starts", () => {
-        cy.get(squareSelector).should("have.text", "");
+        cy.get(allSquares).should("have.text", "");
     });
 });
 
@@ -15,14 +15,29 @@ describe("First move", () => {
         describe(`at (${column}, ${row})`, () => {
             const square = squareAt(row, column);
             it("should show the human's first move", () => {
-                cy.get(square).click().should("have.text", "X");
+                cy.get(square).click().invoke("attr", "data-symbol").should("eq", "X");
+                cy.get("[data-test=gameboard] [data-symbol=X]").should("have.length", 1);
             });
 
             it("should show computer's move after human's move", () => {
-                cy.get(square).first().click().should("have.text", "X");
-                cy.get(squareSelector).contains("O");
+                cy.get(square).first().click().invoke("attr", "data-symbol").should("eq", "X");
+                cy.get("[data-test=gameboard] [data-symbol=X]").should("have.length", 1);
+                cy.get("[data-test=gameboard] [data-symbol=O]").should("have.length", 1);
             });
         });
+    });
+});
+describe("subsequent moves", () => {
+    it("should disallow moves on an existing X square", () => {
+        cy.get(squareAt(0, 0)).click().click();
+        cy.get("[data-test=gameboard] [data-symbol=X]").should("have.length", 1);
+        cy.get("[data-test=gameboard] [data-symbol=O]").should("have.length", 1);
+    });
+    it("should disallow moves on an existing O square", () => {
+        cy.get(squareAt(0, 0)).click();
+        cy.get("[data-test=gameboard] [data-symbol=O]").click();
+        cy.get("[data-test=gameboard] [data-symbol=X]").should("have.length", 1);
+        cy.get("[data-test=gameboard] [data-symbol=O]").should("have.length", 1);
     });
 });
 
