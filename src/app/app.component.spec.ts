@@ -1,40 +1,40 @@
 import { TestBed } from "@angular/core/testing";
-import { By } from "@angular/platform-browser";
 import { AppComponent } from "./app.component";
 import { SquareComponent } from "./square/square.component";
 
-describe("App", () => {
+describe("Game board", () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [AppComponent, SquareComponent]
         }).compileComponents();
     });
-
-    forAllSquares((row, column) => {
-        it(`should show the human move at (${column}, ${row})`, () => {
-            const fixture = TestBed.createComponent(AppComponent);
-            fixture.detectChanges();
-            const app = fixture.componentInstance;
-            app.humanMove(row, column);
-            expect(app.squares[row][column]).toBe("X");
+    describe("First turn", () => {
+        forAllSquares((row, column) => {
+            describe(`Human moves at (${column}, ${row})`, () => {
+                it(`should show the human move on that square`, () => {
+                    const fixture = TestBed.createComponent(AppComponent);
+                    fixture.detectChanges();
+                    const app = fixture.componentInstance;
+                    app.humanMove(row, column);
+                    expect(app.squares[row][column]).toBe("X");
+                });
+                it(`should show the following computer move in a different square`, () => {
+                    const fixture = TestBed.createComponent(AppComponent);
+                    fixture.detectChanges();
+                    const app = fixture.componentInstance;
+                    app.humanMove(row, column);
+                    fixture.detectChanges();
+                    expect(app.squares.flat(1)).toContain("X");
+                    expect(app.squares.flat(1)).toContain("O");
+                });
+            });
         });
-    });
-    it("should show the computer move", () => {
-        const fixture = TestBed.createComponent(AppComponent);
-        fixture.detectChanges();
-        fixture.componentInstance.computerMove();
-        fixture.detectChanges();
-        expect(fixture.componentInstance.squares.flat(1)).toContain("O");
-    });
-    forAllSquares((row, column) => {
-        it(`should make computer move after human moves at (${column}, ${row}`, () => {
+        it("should show the computer move", () => {
             const fixture = TestBed.createComponent(AppComponent);
             fixture.detectChanges();
-            const app = fixture.componentInstance;
-            app.humanMove(row, column);
+            fixture.componentInstance.computerMove();
             fixture.detectChanges();
-            expect(app.squares[row][column]).toBe("X");
-            expect(app.squares.flat(1)).toContain("O");
+            expect(fixture.componentInstance.squares.flat(1)).toContain("O");
         });
     });
 });
