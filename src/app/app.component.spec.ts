@@ -59,27 +59,41 @@ describe("Game board", () => {
                                 ["", "", ""],
                                 ["", "", ""]
                             ];
-                            const expectedTestRow = ["O", "O", "O"] as Row;
-                            const initialTestRow = updateElement(expectedTestRow, posIndex, "");
-                            const testSquares: Board = updateElement(
+                            const expectedRow = ["O", "O", "O"] as Row;
+                            const initialRow = updateElement(expectedRow, posIndex, "");
+                            const testBoard: Board = updateElement(
                                 initialBoard,
                                 rowIndex,
-                                initialTestRow
+                                initialRow
                             );
-                            const expectedSquares: Board = updateElement(
+                            const expectedBoard: Board = updateElement(
                                 initialBoard,
                                 rowIndex,
-                                expectedTestRow
+                                expectedRow
                             );
-                            app.squares = testSquares;
+                            app.squares = testBoard;
                             app.computerMove();
-                            console.log(app.squares);
                             expect(app.squares)
                                 .withContext("Computer did not win")
-                                .toEqual(expectedSquares);
+                                .toEqual(expectedBoard);
                         });
                     });
                 });
+            });
+            it(`in the first column`, () => {
+                const testBoard: Board = [
+                    ["O", "", ""],
+                    ["O", "", ""],
+                    ["", "", ""]
+                ];
+                const expectedBoard: Board = [
+                    ["O", "", ""],
+                    ["O", "", ""],
+                    ["O", "", ""]
+                ];
+                app.squares = testBoard;
+                app.computerMove();
+                expect(app.squares).withContext("Computer did not win").toEqual(expectedBoard);
             });
         });
     });

@@ -14,9 +14,6 @@ export class AppComponent {
         ["", "", ""],
         ["", "", ""]
     ];
-    public getRow(index: number): Row {
-        return this.squares[index];
-    }
 
     humanMove(row: number, column: number) {
         if (this.squares[row][column] == "") {
@@ -25,34 +22,39 @@ export class AppComponent {
         }
     }
     computerMove() {
-        for (const row in this.squares) {
+        for (const row in [0, 1, 2]) {
             if (almostComplete("O", this.squares[row])) {
                 const col = this.squares[row].findIndex(s => s == "");
                 if (col >= 0) {
-                    this.setSymbol(Number(row), col, "O");
+                    this.squares[row][col] = "O";
+                    return;
+                }
+            }
+        }
+        for (const colIndex in [0, 1, 2]) {
+            const column = this.getColumn(Number(colIndex));
+            if (almostComplete("O", column)) {
+                const pos = column.findIndex(s => s == "");
+                if (pos >= 0) {
+                    this.squares[pos][colIndex] = "O";
                     return;
                 }
             }
         }
         this.defaultMove();
     }
+    getColumn(colIndex: number): Row {
+        return [this.squares[0][colIndex], this.squares[1][colIndex], this.squares[2][colIndex]];
+    }
     defaultMove() {
         for (const row in this.squares) {
             for (const column in this.squares[row]) {
                 if (this.squares[row][column] == "") {
-                    // this.squares[row][column] = "O";
-                    this.squares[row] = updateElement(this.squares[row], Number(column), "O");
+                    this.squares[row][column] = "O";
                     return;
                 }
             }
         }
-    }
-    setSymbol(row: number, column: number, value: string) {
-        this.squares = updateElement(
-            this.squares,
-            row,
-            updateElement(this.squares[row], column, value)
-        );
     }
 }
 function almostComplete(symbol: string, row: Row): Boolean {
