@@ -50,37 +50,37 @@ describe("Game board", () => {
             });
         }
         describe("should have the computer win as soon as possible", () => {
-            for (const [rowIndex, rowName] of [
-                [0, "top"],
-                [1, "middle"],
-                [2, "bottom"]
-            ] as [number, string][]) {
-                it(`in the ${rowName} row`, () => {
-                    const initialBoard: Board = [
-                        ["", "", ""],
-                        ["", "", ""],
-                        ["", "", ""]
-                    ];
-                    const initialTestRow: Row = ["O", "O", ""];
-                    const expectedTestRow: Row = ["O", "O", "O"];
-                    const testSquares: Board = updateElement(
-                        initialBoard,
-                        rowIndex,
-                        initialTestRow
-                    );
-                    const expectedSquares: Board = updateElement(
-                        initialBoard,
-                        rowIndex,
-                        expectedTestRow
-                    );
-                    app.squares = testSquares;
-                    app.computerMove();
-                    console.log(app.squares);
-                    expect(app.squares)
-                        .withContext("Computer did not win")
-                        .toEqual(expectedSquares);
+            ["top", "middle", "bottom"].forEach((rowName, rowIndex) => {
+                describe(`in the ${rowName} row`, () => {
+                    ["first", "second", "third"].forEach((posOrdinal, posIndex) => {
+                        it(`with the ${posOrdinal} square missing`, () => {
+                            const initialBoard: Board = [
+                                ["", "", ""],
+                                ["", "", ""],
+                                ["", "", ""]
+                            ];
+                            const expectedTestRow = ["O", "O", "O"] as Row;
+                            const initialTestRow = updateElement(expectedTestRow, posIndex, "");
+                            const testSquares: Board = updateElement(
+                                initialBoard,
+                                rowIndex,
+                                initialTestRow
+                            );
+                            const expectedSquares: Board = updateElement(
+                                initialBoard,
+                                rowIndex,
+                                expectedTestRow
+                            );
+                            app.squares = testSquares;
+                            app.computerMove();
+                            console.log(app.squares);
+                            expect(app.squares)
+                                .withContext("Computer did not win")
+                                .toEqual(expectedSquares);
+                        });
+                    });
                 });
-            }
+            });
         });
     });
 });
