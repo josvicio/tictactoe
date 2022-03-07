@@ -41,10 +41,42 @@ export class AppComponent {
                 }
             }
         }
+        for (const colIndex in [0, 1, 2]) {
+            const column = this.getColumn(Number(colIndex));
+            if (almostComplete("O", column)) {
+                const pos = column.findIndex(s => s == "");
+                if (pos >= 0) {
+                    this.squares[pos][colIndex] = "O";
+                    return;
+                }
+            }
+        }
+        const diagonal = this.getDiagonal();
+        if (almostComplete("O", diagonal)) {
+            const pos = diagonal.findIndex(s => s == "");
+            if (pos >= 0) {
+                this.squares[pos][pos] = "O";
+                return;
+            }
+        }
+        const antiDiagonal = this.getAntiDiagonal();
+        if (almostComplete("O", antiDiagonal)) {
+            const pos = antiDiagonal.findIndex(s => s == "");
+            if (pos >= 0) {
+                this.squares[pos][2 - pos] = "O";
+                return;
+            }
+        }
         this.defaultMove();
     }
     getColumn(colIndex: number): Row {
         return [this.squares[0][colIndex], this.squares[1][colIndex], this.squares[2][colIndex]];
+    }
+    getDiagonal(): Row {
+        return [this.squares[0][0], this.squares[1][1], this.squares[2][2]];
+    }
+    getAntiDiagonal(): Row {
+        return [this.squares[0][2], this.squares[1][1], this.squares[2][0]];
     }
     defaultMove() {
         for (const row in this.squares) {

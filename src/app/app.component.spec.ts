@@ -95,6 +95,36 @@ describe("Game board", () => {
                 app.computerMove();
                 expect(app.squares).withContext("Computer did not win").toEqual(expectedBoard);
             });
+            it(`in a diagonal`, () => {
+                const testBoard: Board = [
+                    ["O", "", ""],
+                    ["", "O", ""],
+                    ["", "", ""]
+                ];
+                const expectedBoard: Board = [
+                    ["O", "", ""],
+                    ["", "O", ""],
+                    ["", "", "O"]
+                ];
+                app.squares = testBoard;
+                app.computerMove();
+                expect(app.squares).withContext("Computer did not win").toEqual(expectedBoard);
+            });
+            it(`in a antidiagonal`, () => {
+                const testBoard: Board = [
+                    ["", "", "O"],
+                    ["", "O", ""],
+                    ["", "", ""]
+                ];
+                const expectedBoard: Board = [
+                    ["", "", "O"],
+                    ["", "O", ""],
+                    ["O", "", ""]
+                ];
+                app.squares = testBoard;
+                app.computerMove();
+                expect(app.squares).withContext("Computer did not win").toEqual(expectedBoard);
+            });
         });
     });
 });
