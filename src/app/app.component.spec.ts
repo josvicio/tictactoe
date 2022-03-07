@@ -110,7 +110,7 @@ describe("Game board", () => {
                 app.computerMove();
                 expect(app.squares).withContext("Computer did not win").toEqual(expectedBoard);
             });
-            it(`in a antidiagonal`, () => {
+            it(`in an antidiagonal`, () => {
                 const testBoard: Board = [
                     ["", "", "O"],
                     ["", "O", ""],

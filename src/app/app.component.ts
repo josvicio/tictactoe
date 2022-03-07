@@ -3,6 +3,48 @@ import { Component } from "@angular/core";
 export type Row = [string, string, string];
 export type Board = [Row, Row, Row];
 
+type LineFactorNumber = -1 | 0 | 1;
+type LineOffsetNumber = 0 | 1 | 2;
+interface LineSpec {
+    offset: { x: LineOffsetNumber; y: LineOffsetNumber };
+    factor: { x: LineFactorNumber; y: LineFactorNumber };
+}
+
+const Lines: { [key: string]: LineSpec } = {
+    DIAGONAL: {
+        offset: { x: 1, y: 1 },
+        factor: { x: -1, y: 1 }
+    },
+    ANTIDIAGONAL: {
+        offset: { x: 1, y: 1 },
+        factor: { x: 1, y: 1 }
+    },
+    TOP: {
+        offset: { x: 1, y: 0 },
+        factor: { x: 1, y: 0 }
+    },
+    MIDDLE: {
+        offset: { x: 1, y: 1 },
+        factor: { x: 1, y: 0 }
+    },
+    BOTTOM: {
+        offset: { x: 1, y: 2 },
+        factor: { x: 1, y: 0 }
+    },
+    LEFT: {
+        offset: { x: 0, y: 1 },
+        factor: { x: 0, y: 1 }
+    },
+    CENTER: {
+        offset: { x: 1, y: 1 },
+        factor: { x: 0, y: 1 }
+    },
+    RIGHT: {
+        offset: { x: 2, y: 1 },
+        factor: { x: 0, y: 1 }
+    }
+} as const;
+
 @Component({
     selector: "app-root",
     templateUrl: "./app.component.html",
@@ -22,61 +64,26 @@ export class AppComponent {
         }
     }
     computerMove() {
-        for (const row in [0, 1, 2]) {
-            if (almostComplete("O", this.squares[row])) {
-                const col = this.squares[row].findIndex(s => s == "");
-                if (col >= 0) {
-                    this.squares[row][col] = "O";
-                    return;
-                }
-            }
-        }
-        for (const colIndex in [0, 1, 2]) {
-            const column = this.getColumn(Number(colIndex));
-            if (almostComplete("O", column)) {
-                const pos = column.findIndex(s => s == "");
+        for (const type in Lines) {
+            const diagonal = this.getLine(Lines[type]);
+            if (almostComplete("O", diagonal)) {
+                const pos = diagonal.findIndex(s => s == "");
                 if (pos >= 0) {
-                    this.squares[pos][colIndex] = "O";
+                    const newY = (pos - 1) * Lines[type].factor.y + Lines[type].offset.y;
+                    const newX = (pos - 1) * Lines[type].factor.x + Lines[type].offset.x;
+                    this.squares[newY][newX] = "O";
                     return;
                 }
-            }
-        }
-        for (const colIndex in [0, 1, 2]) {
-            const column = this.getColumn(Number(colIndex));
-            if (almostComplete("O", column)) {
-                const pos = column.findIndex(s => s == "");
-                if (pos >= 0) {
-                    this.squares[pos][colIndex] = "O";
-                    return;
-                }
-            }
-        }
-        const diagonal = this.getDiagonal();
-        if (almostComplete("O", diagonal)) {
-            const pos = diagonal.findIndex(s => s == "");
-            if (pos >= 0) {
-                this.squares[pos][pos] = "O";
-                return;
-            }
-        }
-        const antiDiagonal = this.getAntiDiagonal();
-        if (almostComplete("O", antiDiagonal)) {
-            const pos = antiDiagonal.findIndex(s => s == "");
-            if (pos >= 0) {
-                this.squares[pos][2 - pos] = "O";
-                return;
             }
         }
         this.defaultMove();
     }
-    getColumn(colIndex: number): Row {
-        return [this.squares[0][colIndex], this.squares[1][colIndex], this.squares[2][colIndex]];
-    }
-    getDiagonal(): Row {
-        return [this.squares[0][0], this.squares[1][1], this.squares[2][2]];
-    }
-    getAntiDiagonal(): Row {
-        return [this.squares[0][2], this.squares[1][1], this.squares[2][0]];
+    getLine(spec: LineSpec): Row {
+        return [
+            this.squares[-1 * spec.factor.y + spec.offset.y][-1 * spec.factor.x + spec.offset.x],
+            this.squares[0 * spec.factor.y + spec.offset.y][0 * spec.factor.x + spec.offset.x],
+            this.squares[1 * spec.factor.y + spec.offset.y][1 * spec.factor.x + spec.offset.x]
+        ];
     }
     defaultMove() {
         for (const row in this.squares) {
