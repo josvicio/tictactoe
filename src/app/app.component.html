@@ -5,8 +5,8 @@
                 data-test="square"
                 [attr.data-row]="row"
                 [attr.data-column]="column"
-                [attr.data-symbol]="squares[row][column]"
-                [symbol]="squares[row][column]"
+                [attr.data-symbol]="squares[row * 3 + column]"
+                [symbol]="squares[row * 3 + column]"
                 (click)="humanMove(row, column)"
             ></square>
         </td>

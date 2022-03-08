@@ -2,16 +2,16 @@ import { Component } from "@angular/core";
 
 export type Symbol = "" | "X" | "O";
 export type Line = [Symbol, Symbol, Symbol];
-export type Board = [Line, Line, Line];
+export type Board = [Symbol, Symbol, Symbol, Symbol, Symbol, Symbol, Symbol, Symbol, Symbol];
 
 type LineFactorNumber = -1 | 0 | 1;
 type LineOffsetNumber = 0 | 1 | 2;
-interface LineSpec {
+export interface LineSpec {
     offset: { x: LineOffsetNumber; y: LineOffsetNumber };
     factor: { x: LineFactorNumber; y: LineFactorNumber };
 }
 
-const LineSpecs: { [key: string]: LineSpec } = {
+export const LineSpecs: { [key: string]: LineSpec } = {
     DIAGONAL: {
         offset: { x: 1, y: 1 },
         factor: { x: -1, y: 1 }
@@ -52,15 +52,17 @@ const LineSpecs: { [key: string]: LineSpec } = {
     styleUrls: ["./app.component.sass"]
 })
 export class AppComponent {
-    squares: Board = [
-        ["", "", ""],
-        ["", "", ""],
-        ["", "", ""]
-    ];
+    squares: Board = ["", "", "", "", "", "", "", "", ""];
 
+    getSquare(row: number, column: number) {
+        return this.squares[row * 3 + column];
+    }
+    setSquare(row: number, column: number, symbol: Symbol) {
+        this.squares[row * 3 + column] = symbol;
+    }
     humanMove(row: number, column: number) {
-        if (this.squares[row][column] == "") {
-            this.squares[row][column] = "X";
+        if (this.getSquare(row, column) == "") {
+            this.setSquare(row, column, "X");
             this.computerMove();
         }
     }
@@ -75,7 +77,7 @@ export class AppComponent {
                         const { factor, offset } = lineSpec;
                         const newY = (pos - 1) * factor.y + offset.y;
                         const newX = (pos - 1) * factor.x + offset.x;
-                        this.squares[newY][newX] = "O";
+                        this.setSquare(newY, newX, "O");
                         return;
                     }
                 }
@@ -85,16 +87,16 @@ export class AppComponent {
     }
     getLine(spec: LineSpec): Line {
         return [
-            this.squares[-1 * spec.factor.y + spec.offset.y][-1 * spec.factor.x + spec.offset.x],
-            this.squares[0 * spec.factor.y + spec.offset.y][0 * spec.factor.x + spec.offset.x],
-            this.squares[1 * spec.factor.y + spec.offset.y][1 * spec.factor.x + spec.offset.x]
+            this.getSquare(-1 * spec.factor.y + spec.offset.y, -1 * spec.factor.x + spec.offset.x),
+            this.getSquare(0 * spec.factor.y + spec.offset.y, 0 * spec.factor.x + spec.offset.x),
+            this.getSquare(1 * spec.factor.y + spec.offset.y, 1 * spec.factor.x + spec.offset.x)
         ];
     }
     defaultMove() {
-        for (const row in this.squares) {
-            for (const column in this.squares[row]) {
-                if (this.squares[row][column] == "") {
-                    this.squares[row][column] = "O";
+        for (const row of [0, 1, 2]) {
+            for (const column of [0, 1, 2]) {
+                if (this.getSquare(row, column) == "") {
+                    this.setSquare(row, column, "O");
                     return;
                 }
             }
@@ -103,10 +105,4 @@ export class AppComponent {
 }
 function almostComplete(symbol: string, line: Line): Boolean {
     return line.filter(s => s == symbol).length == line.length - 1;
-}
-
-export function updateElement<E, T extends E[]>(tuple: T, index: number, value: E): T {
-    let newTuple: [...T] = [...tuple];
-    newTuple[index] = value;
-    return newTuple;
 }

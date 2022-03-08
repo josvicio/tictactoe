@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { AppComponent, Board, Line, Symbol, updateElement } from "./app.component";
+import { AppComponent, Board, Line, LineSpec, LineSpecs, Symbol } from "./app.component";
 import { SquareComponent } from "./square/square.component";
 
 describe("Game board", () => {
@@ -19,13 +19,13 @@ describe("Game board", () => {
             describe(`Human moves at (${column}, ${row})`, () => {
                 it(`should show the human move on that square`, () => {
                     app.humanMove(row, column);
-                    expect(app.squares[row][column]).toBe("X");
+                    expect(app.getSquare(row, column)).toBe("X");
                 });
                 it(`should show the following computer move in a different square`, () => {
                     app.humanMove(row, column);
                     fixture.detectChanges();
-                    expect(app.squares.flat(1)).toContain("X");
-                    expect(app.squares.flat(1)).toContain("O");
+                    expect(app.squares).toContain("X");
+                    expect(app.squares).toContain("O");
                 });
             });
         });
@@ -36,13 +36,9 @@ describe("Game board", () => {
         });
     });
     describe("Subsequent turns", () => {
-        for (const symbol of ["X", "O"]) {
+        for (const symbol of ["X" as Symbol, "O" as Symbol]) {
             it(`should disallow human plays on an existing ${symbol} square`, () => {
-                const testSquares: Board = [
-                    [symbol as Symbol, "", ""],
-                    ["", "", ""],
-                    ["", "", ""]
-                ];
+                const testSquares: Board = [symbol, "", "", "", "", "", "", "", ""];
                 app.squares = testSquares;
                 app.humanMove(0, 0);
                 expect(app.squares[0][0]).toEqual(symbol);
@@ -50,25 +46,22 @@ describe("Game board", () => {
             });
         }
         describe("should have the computer win as soon as possible", () => {
-            ["top", "middle", "bottom"].forEach((rowName, rowIndex) => {
-                describe(`in the ${rowName} row`, () => {
+            ["TOP", "MIDDLE", "BOTTOM"].forEach((rowName, rowIndex) => {
+                describe(`in the ${rowName.toLowerCase()} row`, () => {
                     ["first", "second", "third"].forEach((posOrdinal, posIndex) => {
                         it(`with the ${posOrdinal} square missing`, () => {
-                            const initialBoard: Board = [
-                                ["", "", ""],
-                                ["", "", ""],
-                                ["", "", ""]
-                            ];
+                            const initialBoard: Board = ["", "", "", "", "", "", "", "", ""];
                             const expectedRow = ["O", "O", "O"] as Line;
                             const initialRow = updateElement(expectedRow, posIndex, "");
-                            const testBoard: Board = updateElement(
+                            const lineSpec = LineSpecs[rowName];
+                            const testBoard: Board = updateByLine(
                                 initialBoard,
-                                rowIndex,
+                                lineSpec,
                                 initialRow
                             );
-                            const expectedBoard: Board = updateElement(
+                            const expectedBoard: Board = updateByLine(
                                 initialBoard,
-                                rowIndex,
+                                lineSpec,
                                 expectedRow
                             );
                             app.squares = testBoard;
@@ -81,46 +74,22 @@ describe("Game board", () => {
                 });
             });
             it(`in the first column`, () => {
-                const testBoard: Board = [
-                    ["O", "", ""],
-                    ["O", "", ""],
-                    ["", "", ""]
-                ];
-                const expectedBoard: Board = [
-                    ["O", "", ""],
-                    ["O", "", ""],
-                    ["O", "", ""]
-                ];
+                const testBoard: Board = ["O", "", "", "O", "", "", "", "", ""];
+                const expectedBoard: Board = ["O", "", "", "O", "", "", "O", "", ""];
                 app.squares = testBoard;
                 app.computerMove();
                 expect(app.squares).withContext("Computer did not win").toEqual(expectedBoard);
             });
             it(`in a diagonal`, () => {
-                const testBoard: Board = [
-                    ["O", "", ""],
-                    ["", "O", ""],
-                    ["", "", ""]
-                ];
-                const expectedBoard: Board = [
-                    ["O", "", ""],
-                    ["", "O", ""],
-                    ["", "", "O"]
-                ];
+                const testBoard: Board = ["O", "", "", "", "O", "", "", "", ""];
+                const expectedBoard: Board = ["O", "", "", "", "O", "", "", "", "O"];
                 app.squares = testBoard;
                 app.computerMove();
                 expect(app.squares).withContext("Computer did not win").toEqual(expectedBoard);
             });
             it(`in an antidiagonal`, () => {
-                const testBoard: Board = [
-                    ["", "", "O"],
-                    ["", "O", ""],
-                    ["", "", ""]
-                ];
-                const expectedBoard: Board = [
-                    ["", "", "O"],
-                    ["", "O", ""],
-                    ["O", "", ""]
-                ];
+                const testBoard: Board = ["", "", "O", "", "O", "", "", "", ""];
+                const expectedBoard: Board = ["", "", "O", "", "O", "", "O", "", ""];
                 app.squares = testBoard;
                 app.computerMove();
                 expect(app.squares).withContext("Computer did not win").toEqual(expectedBoard);
@@ -128,16 +97,8 @@ describe("Game board", () => {
         });
         describe("should have the computer block the human from winning", () => {
             it("in a row", () => {
-                const testBoard: Board = [
-                    ["X", "", "X"],
-                    ["", "", ""],
-                    ["", "", ""]
-                ];
-                const expectedBoard: Board = [
-                    ["X", "O", "X"],
-                    ["", "", ""],
-                    ["", "", ""]
-                ];
+                const testBoard: Board = ["X", "", "X", "", "", "", "", "", ""];
+                const expectedBoard: Board = ["X", "O", "X", "", "", "", "", "", ""];
                 app.squares = testBoard;
                 app.computerMove();
                 expect(app.squares)
@@ -145,16 +106,8 @@ describe("Game board", () => {
                     .toEqual(expectedBoard);
             });
             it("in a column", () => {
-                const testBoard: Board = [
-                    ["", "", "X"],
-                    ["", "", "X"],
-                    ["", "", ""]
-                ];
-                const expectedBoard: Board = [
-                    ["", "", "X"],
-                    ["", "", "X"],
-                    ["", "", "O"]
-                ];
+                const testBoard: Board = ["", "", "X", "", "", "X", "", "", ""];
+                const expectedBoard: Board = ["", "", "X", "", "", "X", "", "", "O"];
                 app.squares = testBoard;
                 app.computerMove();
                 expect(app.squares)
@@ -162,16 +115,8 @@ describe("Game board", () => {
                     .toEqual(expectedBoard);
             });
             it("in a diagonal", () => {
-                const testBoard: Board = [
-                    ["", "", ""],
-                    ["", "X", ""],
-                    ["X", "", ""]
-                ];
-                const expectedBoard: Board = [
-                    ["", "", "O"],
-                    ["", "X", ""],
-                    ["X", "", ""]
-                ];
+                const testBoard: Board = ["", "", "", "", "X", "", "X", "", ""];
+                const expectedBoard: Board = ["", "", "O", "", "X", "", "X", "", ""];
                 app.squares = testBoard;
                 app.computerMove();
                 expect(app.squares)
@@ -180,16 +125,8 @@ describe("Game board", () => {
             });
         });
         it("should have the computer prioritize winning over blocking", () => {
-            const testBoard: Board = [
-                ["X", "", "X"],
-                ["", "", ""],
-                ["O", "O", ""]
-            ];
-            const expectedBoard: Board = [
-                ["X", "", "X"],
-                ["", "", ""],
-                ["O", "O", "O"]
-            ];
+            const testBoard: Board = ["X", "", "X", "", "", "", "O", "O", ""];
+            const expectedBoard: Board = ["X", "", "X", "", "", "", "O", "O", "O"];
             app.squares = testBoard;
             app.computerMove();
             expect(app.squares)
@@ -205,4 +142,17 @@ function forAllSquares(callback: (row: number, column: number) => void) {
             callback(row, column);
         }
     }
+}
+
+function updateByLine(initialBoard: Board, spec: LineSpec, line: Line): Board {
+    return [-1, 0, 1].reduce((board, pos, index) => {
+        const y = pos * spec.factor.y + spec.offset.y;
+        const x = pos * spec.factor.x + spec.offset.x;
+        return updateElement(board, y * 3 + x, line[index]);
+    }, initialBoard);
+}
+function updateElement<E, T extends E[]>(tuple: T, index: number, value: E): T {
+    let newTuple: [...T] = [...tuple];
+    newTuple[index] = value;
+    return newTuple;
 }
