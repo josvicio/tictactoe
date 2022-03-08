@@ -1,7 +1,8 @@
 import { Component } from "@angular/core";
 
-export type Row = [string, string, string];
-export type Board = [Row, Row, Row];
+export type Symbol = "" | "X" | "O";
+export type Line = [Symbol, Symbol, Symbol];
+export type Board = [Line, Line, Line];
 
 type LineFactorNumber = -1 | 0 | 1;
 type LineOffsetNumber = 0 | 1 | 2;
@@ -10,7 +11,7 @@ interface LineSpec {
     factor: { x: LineFactorNumber; y: LineFactorNumber };
 }
 
-const Lines: { [key: string]: LineSpec } = {
+const LineSpecs: { [key: string]: LineSpec } = {
     DIAGONAL: {
         offset: { x: 1, y: 1 },
         factor: { x: -1, y: 1 }
@@ -64,21 +65,25 @@ export class AppComponent {
         }
     }
     computerMove() {
-        for (const type in Lines) {
-            const diagonal = this.getLine(Lines[type]);
-            if (almostComplete("O", diagonal)) {
-                const pos = diagonal.findIndex(s => s == "");
-                if (pos >= 0) {
-                    const newY = (pos - 1) * Lines[type].factor.y + Lines[type].offset.y;
-                    const newX = (pos - 1) * Lines[type].factor.x + Lines[type].offset.x;
-                    this.squares[newY][newX] = "O";
-                    return;
+        for (const symbol of ["O", "X"]) {
+            for (const type in LineSpecs) {
+                const lineSpec = LineSpecs[type];
+                const diagonal = this.getLine(lineSpec);
+                if (almostComplete(symbol, diagonal)) {
+                    const pos = diagonal.findIndex(s => s == "");
+                    if (pos >= 0) {
+                        const { factor, offset } = lineSpec;
+                        const newY = (pos - 1) * factor.y + offset.y;
+                        const newX = (pos - 1) * factor.x + offset.x;
+                        this.squares[newY][newX] = "O";
+                        return;
+                    }
                 }
             }
         }
         this.defaultMove();
     }
-    getLine(spec: LineSpec): Row {
+    getLine(spec: LineSpec): Line {
         return [
             this.squares[-1 * spec.factor.y + spec.offset.y][-1 * spec.factor.x + spec.offset.x],
             this.squares[0 * spec.factor.y + spec.offset.y][0 * spec.factor.x + spec.offset.x],
@@ -96,8 +101,8 @@ export class AppComponent {
         }
     }
 }
-function almostComplete(symbol: string, row: Row): Boolean {
-    return row.filter(s => s == symbol).length == row.length - 1;
+function almostComplete(symbol: string, line: Line): Boolean {
+    return line.filter(s => s == symbol).length == line.length - 1;
 }
 
 export function updateElement<E, T extends E[]>(tuple: T, index: number, value: E): T {

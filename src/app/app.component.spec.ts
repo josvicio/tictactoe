@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { AppComponent, Board, Row, updateElement } from "./app.component";
+import { AppComponent, Board, Line, Symbol, updateElement } from "./app.component";
 import { SquareComponent } from "./square/square.component";
 
 describe("Game board", () => {
@@ -39,7 +39,7 @@ describe("Game board", () => {
         for (const symbol of ["X", "O"]) {
             it(`should disallow human plays on an existing ${symbol} square`, () => {
                 const testSquares: Board = [
-                    [symbol, "", ""],
+                    [symbol as Symbol, "", ""],
                     ["", "", ""],
                     ["", "", ""]
                 ];
@@ -59,7 +59,7 @@ describe("Game board", () => {
                                 ["", "", ""],
                                 ["", "", ""]
                             ];
-                            const expectedRow = ["O", "O", "O"] as Row;
+                            const expectedRow = ["O", "O", "O"] as Line;
                             const initialRow = updateElement(expectedRow, posIndex, "");
                             const testBoard: Board = updateElement(
                                 initialBoard,
@@ -125,6 +125,76 @@ describe("Game board", () => {
                 app.computerMove();
                 expect(app.squares).withContext("Computer did not win").toEqual(expectedBoard);
             });
+        });
+        describe("should have the computer block the human from winning", () => {
+            it("in a row", () => {
+                const testBoard: Board = [
+                    ["X", "", "X"],
+                    ["", "", ""],
+                    ["", "", ""]
+                ];
+                const expectedBoard: Board = [
+                    ["X", "O", "X"],
+                    ["", "", ""],
+                    ["", "", ""]
+                ];
+                app.squares = testBoard;
+                app.computerMove();
+                expect(app.squares)
+                    .withContext("Computer let the human win")
+                    .toEqual(expectedBoard);
+            });
+            it("in a column", () => {
+                const testBoard: Board = [
+                    ["", "", "X"],
+                    ["", "", "X"],
+                    ["", "", ""]
+                ];
+                const expectedBoard: Board = [
+                    ["", "", "X"],
+                    ["", "", "X"],
+                    ["", "", "O"]
+                ];
+                app.squares = testBoard;
+                app.computerMove();
+                expect(app.squares)
+                    .withContext("Computer let the human win")
+                    .toEqual(expectedBoard);
+            });
+            it("in a diagonal", () => {
+                const testBoard: Board = [
+                    ["", "", ""],
+                    ["", "X", ""],
+                    ["X", "", ""]
+                ];
+                const expectedBoard: Board = [
+                    ["", "", "O"],
+                    ["", "X", ""],
+                    ["X", "", ""]
+                ];
+                app.squares = testBoard;
+                app.computerMove();
+                expect(app.squares)
+                    .withContext("Computer let the human win")
+                    .toEqual(expectedBoard);
+            });
+        });
+        it("should have the computer prioritize winning over blocking", () => {
+            const testBoard: Board = [
+                ["X", "", "X"],
+                ["", "", ""],
+                ["O", "O", ""]
+            ];
+            const expectedBoard: Board = [
+                ["X", "", "X"],
+                ["", "", ""],
+                ["O", "O", "O"]
+            ];
+            app.squares = testBoard;
+            app.computerMove();
+            expect(app.squares)
+                .withContext("Computer did not try to win immediately")
+                .toEqual(expectedBoard);
         });
     });
 });
