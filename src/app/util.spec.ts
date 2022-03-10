@@ -1,4 +1,4 @@
-import { Line, LineData } from "./board";
+import { BoardSymbol, LineData } from "./board";
 import { updateTuple } from "./util";
 
 describe("updateTuple", () => {

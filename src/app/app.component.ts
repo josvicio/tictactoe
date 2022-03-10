@@ -1,47 +1,5 @@
 import { Component } from "@angular/core";
-import { LineData, BoardSymbol as BoardSymbol, BoardData, Board } from "./board";
-
-type LineFactorNumber = -1 | 0 | 1;
-type LineOffsetNumber = 0 | 1 | 2;
-export interface LineSpec {
-    offset: { x: LineOffsetNumber; y: LineOffsetNumber };
-    factor: { x: LineFactorNumber; y: LineFactorNumber };
-}
-
-export const LineSpecs: { [key: string]: LineSpec } = {
-    DIAGONAL: {
-        offset: { x: 1, y: 1 },
-        factor: { x: -1, y: 1 }
-    },
-    ANTIDIAGONAL: {
-        offset: { x: 1, y: 1 },
-        factor: { x: 1, y: 1 }
-    },
-    TOP: {
-        offset: { x: 1, y: 0 },
-        factor: { x: 1, y: 0 }
-    },
-    MIDDLE: {
-        offset: { x: 1, y: 1 },
-        factor: { x: 1, y: 0 }
-    },
-    BOTTOM: {
-        offset: { x: 1, y: 2 },
-        factor: { x: 1, y: 0 }
-    },
-    LEFT: {
-        offset: { x: 0, y: 1 },
-        factor: { x: 0, y: 1 }
-    },
-    CENTER: {
-        offset: { x: 1, y: 1 },
-        factor: { x: 0, y: 1 }
-    },
-    RIGHT: {
-        offset: { x: 2, y: 1 },
-        factor: { x: 0, y: 1 }
-    }
-} as const;
+import { LineData, BoardSymbol as BoardSymbol, Board, Lines, Line } from "./board";
 
 @Component({
     selector: "app-root",
@@ -49,13 +7,15 @@ export const LineSpecs: { [key: string]: LineSpec } = {
     styleUrls: ["./app.component.sass"]
 })
 export class AppComponent {
-    squares: BoardData = ["", "", "", "", "", "", "", "", ""];
-    board: Board = new Board(this.squares);
+    board: Board = new Board();
     getSquare(row: number, column: number) {
-        return this.squares[row * 3 + column];
+        return this.board.getSquare(row, column);
     }
     setSquare(row: number, column: number, symbol: BoardSymbol) {
-        this.squares[row * 3 + column] = symbol;
+        this.board = this.board.withSquareAtCoords(row, column, symbol);
+    }
+    setLine(line: Line, lineData: LineData) {
+        this.board = this.board.withLine(line, lineData);
     }
     humanMove(row: number, column: number) {
         if (this.getSquare(row, column) == "") {
@@ -64,14 +24,14 @@ export class AppComponent {
         }
     }
     computerMove() {
-        for (const symbol of ["O", "X"]) {
-            for (const type in LineSpecs) {
-                const lineSpec = LineSpecs[type];
-                const diagonal = this.getLine(lineSpec);
+        for (const symbol of ["O", "X"] as ["O", "X"]) {
+            for (const type in Lines) {
+                const line = Lines[type];
+                const diagonal = this.board.getLineData(line);
                 if (almostComplete(symbol, diagonal)) {
                     const pos = diagonal.findIndex(s => s == "");
                     if (pos >= 0) {
-                        this.setSquare(...coordsByLine(lineSpec, pos), "O");
+                        this.board = this.board.withSquareAtLinePos(line, pos, "O");
                         return;
                     }
                 }
@@ -79,12 +39,8 @@ export class AppComponent {
         }
         this.defaultMove();
     }
-    getLine(spec: LineSpec): LineData {
-        return [
-            this.getSquare(...coordsByLine(spec, 0)),
-            this.getSquare(...coordsByLine(spec, 1)),
-            this.getSquare(...coordsByLine(spec, 2))
-        ];
+    getLine(line: Line): LineData {
+        return this.board.getLineData(line);
     }
     defaultMove() {
         for (const row of [0, 1, 2]) {
@@ -97,22 +53,7 @@ export class AppComponent {
         }
     }
 }
-export function coordsByLine(spec: LineSpec, pos: number): [y: number, x: number] {
-    const transformPos = [-1, 0, 1][pos];
-    return [
-        transformPos * spec.factor.y + spec.offset.y,
-        transformPos * spec.factor.x + spec.offset.x
-    ];
-}
-function almostComplete(symbol: string, line: LineData): Boolean {
+
+function almostComplete(symbol: BoardSymbol, line: LineData): Boolean {
     return line.filter(s => s == symbol).length == line.length - 1;
-}
-function updateTuple<T extends [...T], K extends keyof [...T], V extends [...T][K]>(
-    tuple: [...T],
-    index: K,
-    value: V
-) {
-    let [...newTuple] = tuple;
-    newTuple[index] = value;
-    return newTuple;
 }
