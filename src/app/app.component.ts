@@ -74,10 +74,7 @@ export class AppComponent {
                 if (almostComplete(symbol, diagonal)) {
                     const pos = diagonal.findIndex(s => s == "");
                     if (pos >= 0) {
-                        const { factor, offset } = lineSpec;
-                        const newY = (pos - 1) * factor.y + offset.y;
-                        const newX = (pos - 1) * factor.x + offset.x;
-                        this.setSquare(newY, newX, "O");
+                        this.setSquare(...coordsByLine(lineSpec, pos), "O");
                         return;
                     }
                 }
@@ -87,9 +84,9 @@ export class AppComponent {
     }
     getLine(spec: LineSpec): Line {
         return [
-            this.getSquare(-1 * spec.factor.y + spec.offset.y, -1 * spec.factor.x + spec.offset.x),
-            this.getSquare(0 * spec.factor.y + spec.offset.y, 0 * spec.factor.x + spec.offset.x),
-            this.getSquare(1 * spec.factor.y + spec.offset.y, 1 * spec.factor.x + spec.offset.x)
+            this.getSquare(...coordsByLine(spec, 0)),
+            this.getSquare(...coordsByLine(spec, 1)),
+            this.getSquare(...coordsByLine(spec, 2))
         ];
     }
     defaultMove() {
@@ -102,6 +99,13 @@ export class AppComponent {
             }
         }
     }
+}
+export function coordsByLine(spec: LineSpec, pos: number): [y: number, x: number] {
+    const transformPos = [-1, 0, 1][pos];
+    return [
+        transformPos * spec.factor.y + spec.offset.y,
+        transformPos * spec.factor.x + spec.offset.x
+    ];
 }
 function almostComplete(symbol: string, line: Line): Boolean {
     return line.filter(s => s == symbol).length == line.length - 1;
