@@ -1,8 +1,5 @@
 import { Component } from "@angular/core";
-
-export type Symbol = "" | "X" | "O";
-export type Line = [Symbol, Symbol, Symbol];
-export type Board = [Symbol, Symbol, Symbol, Symbol, Symbol, Symbol, Symbol, Symbol, Symbol];
+import { LineData, BoardSymbol as BoardSymbol, BoardData, Board } from "./board";
 
 type LineFactorNumber = -1 | 0 | 1;
 type LineOffsetNumber = 0 | 1 | 2;
@@ -52,12 +49,12 @@ export const LineSpecs: { [key: string]: LineSpec } = {
     styleUrls: ["./app.component.sass"]
 })
 export class AppComponent {
-    squares: Board = ["", "", "", "", "", "", "", "", ""];
-
+    squares: BoardData = ["", "", "", "", "", "", "", "", ""];
+    board: Board = new Board(this.squares);
     getSquare(row: number, column: number) {
         return this.squares[row * 3 + column];
     }
-    setSquare(row: number, column: number, symbol: Symbol) {
+    setSquare(row: number, column: number, symbol: BoardSymbol) {
         this.squares[row * 3 + column] = symbol;
     }
     humanMove(row: number, column: number) {
@@ -82,7 +79,7 @@ export class AppComponent {
         }
         this.defaultMove();
     }
-    getLine(spec: LineSpec): Line {
+    getLine(spec: LineSpec): LineData {
         return [
             this.getSquare(...coordsByLine(spec, 0)),
             this.getSquare(...coordsByLine(spec, 1)),
@@ -107,6 +104,15 @@ export function coordsByLine(spec: LineSpec, pos: number): [y: number, x: number
         transformPos * spec.factor.x + spec.offset.x
     ];
 }
-function almostComplete(symbol: string, line: Line): Boolean {
+function almostComplete(symbol: string, line: LineData): Boolean {
     return line.filter(s => s == symbol).length == line.length - 1;
+}
+function updateTuple<T extends [...T], K extends keyof [...T], V extends [...T][K]>(
+    tuple: [...T],
+    index: K,
+    value: V
+) {
+    let [...newTuple] = tuple;
+    newTuple[index] = value;
+    return newTuple;
 }
