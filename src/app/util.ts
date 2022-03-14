@@ -1,5 +1,5 @@
 export function updateTuple<T extends [...T], K extends keyof T>(
-    tuple: [...T],
+    tuple: readonly [...T],
     index: K,
     value: T[K]
 ): T {

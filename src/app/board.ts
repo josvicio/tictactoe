@@ -1,8 +1,8 @@
 import { updateTuple } from "./util";
 
 export type BoardSymbol = "" | "X" | "O";
-type LineCoordSpec = [factor: number, offset: number];
-export type LineData = [BoardSymbol, BoardSymbol, BoardSymbol];
+type LineCoordSpec = readonly [factor: number, offset: number];
+export type LineData = readonly [BoardSymbol, BoardSymbol, BoardSymbol];
 
 const TRANSFORM_POSITIONS: [number, number, number] = [-1, 0, 1];
 export class Line {
@@ -18,9 +18,7 @@ export class Line {
         return [this.transformIndex(0), this.transformIndex(1), this.transformIndex(2)];
     }
 }
-export namespace Line {
-    export const DIAGONAL = new Line([1, 1], [1, 1]);
-}
+
 export const Lines: { [name: string]: Line } = {
     TOP: new Line([1, 1], [0, 0]),
     MIDDLE: new Line([1, 1], [0, 1]),
@@ -35,7 +33,7 @@ export const Lines: { [name: string]: Line } = {
 function transformCoord([factor, offset]: LineCoordSpec, pos: number): number {
     return TRANSFORM_POSITIONS[pos] * factor + offset;
 }
-export type BoardData = [
+export type BoardData = readonly [
     BoardSymbol,
     BoardSymbol,
     BoardSymbol,

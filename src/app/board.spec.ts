@@ -1,4 +1,4 @@
-import { Board, Line } from "./board";
+import { Board, Line, Lines } from "./board";
 
 describe("Line", () => {
     it("should correctly calculate indices", () => {
@@ -17,7 +17,7 @@ describe("Board", () => {
     });
     it("should correctly return a copy with an entire line changed", () => {
         const initialBoard = new Board();
-        const testBoard = initialBoard.withLine(Line.DIAGONAL, ["O", "X", "O"]);
+        const testBoard = initialBoard.withLine(Lines["DIAGONAL"], ["O", "X", "O"]);
         expect(testBoard).not.toEqual(initialBoard);
         expect(testBoard.boardData).toEqual(["O", "", "", "", "X", "", "", "", "O"]);
     });

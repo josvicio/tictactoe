@@ -5,8 +5,8 @@
                 data-test="square"
                 [attr.data-row]="row"
                 [attr.data-column]="column"
-                [attr.data-symbol]="board.getSquare(row, column)"
-                [symbol]="board.getSquare(row, column)"
+                [attr.data-symbol]="game.board.getSquare(row, column)"
+                [symbol]="game.board.getSquare(row, column)"
                 (click)="humanMove(row, column)"
             ></square>
         </td>
