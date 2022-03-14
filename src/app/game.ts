@@ -23,13 +23,13 @@ export class Game {
     }
     computerMove() {
         for (const symbol of ["O", "X"] as ["O", "X"]) {
-            for (const line in Lines) {
-                var lineData = this.#board.getLineData(Lines[line]);
+            for (const line of Object.values(Lines)) {
+                var lineData = this.#board.getLineData(line);
                 if (almostComplete(symbol, lineData)) {
                     const missingIndex = lineData.findIndex(symbol => symbol == "");
                     if (missingIndex >= 0) {
                         this.updateBoard(board =>
-                            board.withLine(Lines[line], updateTuple(lineData, missingIndex, "O"))
+                            board.withLine(line, updateTuple(lineData, missingIndex, "O"))
                         );
                         return;
                     }

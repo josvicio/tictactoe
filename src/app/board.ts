@@ -6,7 +6,11 @@ export type LineData = readonly [BoardSymbol, BoardSymbol, BoardSymbol];
 
 const TRANSFORM_POSITIONS: [number, number, number] = [-1, 0, 1];
 export class Line {
-    constructor(readonly row: LineCoordSpec, readonly column: LineCoordSpec) {}
+    constructor(
+        readonly row: LineCoordSpec,
+        readonly column: LineCoordSpec,
+        public desc?: string
+    ) {}
 
     transformCoords(pos: number): [row: number, column: number] {
         return [transformCoord(this.column, pos), transformCoord(this.row, pos)];
@@ -20,14 +24,14 @@ export class Line {
 }
 
 export const Lines: { [name: string]: Line } = {
-    TOP: new Line([1, 1], [0, 0]),
-    MIDDLE: new Line([1, 1], [0, 1]),
-    BOTTOM: new Line([1, 1], [0, 2]),
-    LEFT: new Line([0, 0], [1, 1]),
-    CENTER: new Line([0, 1], [1, 1]),
-    RIGHT: new Line([0, 2], [1, 1]),
-    DIAGONAL: new Line([1, 1], [1, 1]),
-    ANTIDIAGONAL: new Line([1, 1], [-1, 1])
+    TOP: new Line([1, 1], [0, 0], "top row"),
+    MIDDLE: new Line([1, 1], [0, 1], "middle row"),
+    BOTTOM: new Line([1, 1], [0, 2], "bottom row"),
+    LEFT: new Line([0, 0], [1, 1], "left column"),
+    CENTER: new Line([0, 1], [1, 1], "center column"),
+    RIGHT: new Line([0, 2], [1, 1], "right column"),
+    DIAGONAL: new Line([1, 1], [1, 1], "diagonal"),
+    ANTIDIAGONAL: new Line([1, 1], [-1, 1], "antidiagonal")
 };
 
 function transformCoord([factor, offset]: LineCoordSpec, pos: number): number {

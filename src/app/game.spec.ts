@@ -1,4 +1,4 @@
-import { Board, BoardSymbol, LineData, Lines } from "./board";
+import { Board, Line, LineData, Lines } from "./board";
 import { Game } from "./game";
 import { updateTuple } from "./util";
 
@@ -35,23 +35,13 @@ describe("Game", () => {
             });
         }
         describe("should have the computer win as soon as possible", () => {
-            [
-                ["TOP", "top row"],
-                ["MIDDLE", "middle row"],
-                ["BOTTOM", "bottom row"],
-                ["LEFT", "left column"],
-                ["CENTER", "center column"],
-                ["RIGHT", "right column"],
-                ["DIAGONAL", "diagonal"],
-                ["ANTIDIAGONAL", "antidiagonal"]
-            ].forEach(([rowIndex, rowName]) => {
-                describe(`in the ${rowName}`, () => {
+            Object.values(Lines).forEach(line => {
+                describe(`in the ${line.desc}`, () => {
                     ["first", "second", "third"].forEach((posOrdinal, posIndex) => {
                         it(`with the ${posOrdinal} square missing`, () => {
                             const initialBoard: Board = new Board();
                             const expectedRow: LineData = ["O", "O", "O"];
                             const initialRow = updateTuple(expectedRow, posIndex, "");
-                            const line = Lines[rowIndex];
                             const testBoard: Board = initialBoard.withLine(line, initialRow);
                             const expectedBoard: Board = testBoard.withLine(line, expectedRow);
                             game = new Game(testBoard);
@@ -65,17 +55,8 @@ describe("Game", () => {
             });
         });
         describe("should have the computer block the human from winning", () => {
-            [
-                ["TOP", "top row"],
-                ["MIDDLE", "middle row"],
-                ["BOTTOM", "bottom row"],
-                ["LEFT", "left column"],
-                ["CENTER", "center column"],
-                ["RIGHT", "right column"],
-                ["DIAGONAL", "diagonal"],
-                ["ANTIDIAGONAL", "antidiagonal"]
-            ].forEach(([rowIndex, rowName]) => {
-                describe(`in the ${rowName}`, () => {
+            Object.values(Lines).forEach(line => {
+                describe(`in the ${line.desc}`, () => {
                     ["first", "second", "third"].forEach((posOrdinal, posIndex) => {
                         it(`with the ${posOrdinal} square missing`, () => {
                             const initialBoard: Board = new Board();
@@ -85,7 +66,6 @@ describe("Game", () => {
                                 "O"
                             );
                             const initialRow = updateTuple(expectedRow, posIndex, "");
-                            const line = Lines[rowIndex];
                             const testBoard: Board = initialBoard.withLine(line, initialRow);
                             const expectedBoard: Board = testBoard.withLine(line, expectedRow);
                             game = new Game(testBoard);
