@@ -21,4 +21,13 @@ describe("Game board", () => {
     it("Should render gameboard", () => {
         expect(debugElement.queryAll(By.css("[data-test=square]")).length).toBe(9);
     });
+    it("should handle keypresses", () => {
+        app.handleKey(new KeyboardEvent("keypress", { key: "3" }));
+        expect(app.game.board.boardData[2])
+            .withContext("X wasn't placed in the expected position")
+            .toEqual("X");
+        expect(app.game.board.boardData.filter(symbol => symbol == "X").length)
+            .withContext("More than one X on the board")
+            .toEqual(1);
+    });
 });

@@ -1,5 +1,5 @@
 import { Board, BoardSymbol, LineData, Lines } from "./board";
-import { updateTuple } from "./util";
+import { coordsToIndex, updateTuple } from "./util";
 
 export class Game {
     #board: Board;
@@ -9,13 +9,17 @@ export class Game {
     get board(): Board {
         return this.#board;
     }
-    humanMove(row: number, column: number) {
-        if (this.board.getSquare(row, column) == "") {
+
+    humanMoveByIndex(index: number) {
+        if (this.board.boardData[index] == "") {
             this.updateBoard(board => {
-                return board.withSquareAtCoords(row, column, "X");
+                return board.withSquareAtIndex(index, "X");
             });
             this.computerMove();
         }
+    }
+    humanMove(row: number, column: number) {
+        this.humanMoveByIndex(coordsToIndex(row, column));
     }
     computerMove() {
         for (const symbol of ["O", "X"] as ["O", "X"]) {

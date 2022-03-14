@@ -1,5 +1,5 @@
 import { LineData } from "./board";
-import { updateTuple } from "./util";
+import { coordsToIndex, updateTuple } from "./util";
 
 describe("updateTuple", () => {
     it("returns modified tuple", () => {
@@ -12,5 +12,10 @@ describe("updateTuple", () => {
         const testTuple: LineData = ["X", "", "X"];
         const newTuple = updateTuple(testTuple, 1, "O");
         expect(newTuple).not.toEqual(testTuple);
+    });
+});
+describe("coordsToIndex", () => {
+    it("correctly calculates index from coords", () => {
+        expect(coordsToIndex(1, 2)).toEqual(5);
     });
 });

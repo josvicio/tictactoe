@@ -7,3 +7,6 @@ export function updateTuple<T extends [...T], K extends keyof T>(
     newTuple[index] = value;
     return newTuple;
 }
+export function coordsToIndex(row: number, column: number): number {
+    return row * 3 + column;
+}

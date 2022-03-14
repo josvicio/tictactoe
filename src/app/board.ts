@@ -1,4 +1,4 @@
-import { updateTuple } from "./util";
+import { coordsToIndex, updateTuple } from "./util";
 
 export type BoardSymbol = "" | "X" | "O";
 type LineCoordSpec = readonly [factor: number, offset: number];
@@ -71,8 +71,4 @@ export class Board {
             return board.withSquareAtLinePos(line, pos, symbol);
         }, this as Board);
     }
-}
-
-function coordsToIndex(row: number, column: number): number {
-    return row * 3 + column;
 }

@@ -26,6 +26,11 @@ describe("First move", () => {
             });
         });
     });
+    it("should show a human move by keyboard input", () => {
+        cy.get("body").trigger("keypress", { key: "6" });
+        cy.get(squareAt(1, 2)).invoke("attr", "data-symbol").should("eq", "X");
+        cy.get("[data-test=gameboard] [data-symbol=X]").should("have.length", 1);
+    });
 });
 describe("subsequent moves", () => {
     it("should disallow moves on an existing X square", () => {
