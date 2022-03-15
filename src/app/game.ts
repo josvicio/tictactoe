@@ -36,6 +36,10 @@ export class Game {
                 }
             }
         }
+        if (this.#board.boardData[4] == "") {
+            this.updateBoard(board => board.withSquareAtIndex(4, "O"));
+            return;
+        }
         this.defaultComputerMove();
     }
     defaultComputerMove() {
