@@ -1,0 +1,7 @@
+services:
+    tictactoe:
+        build: .
+        ports:
+           - 4200:4200
+        volumes:
+           - ./src:/opt/tictactoe/src

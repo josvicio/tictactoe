@@ -1,0 +1,10 @@
+.angular/
+.git/
+.vscode/
+coverage/
+cypress/videos/
+node_modules/
+.env
+.dockerignore
+Dockerfile
+README.md
